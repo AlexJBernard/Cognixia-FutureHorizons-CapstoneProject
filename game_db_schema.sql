@@ -21,11 +21,11 @@ CREATE TABLE users (
 
 -- Game owned by a given user
 CREATE TABLE owned_games (
-    owned_game_id       INT PRIMARY KEY,
-    user_id             INT,
-    game_id             INT,
-    owned_game_num_pkmn INT,
-    owned_game_rating   INT,
+    owned_game_id           INT PRIMARY KEY,
+    user_id                 INT NOT NULL,
+    game_id                 INT NOT NULL,
+    owned_game_num_caught   INT,
+    owned_game_rating       INT,
     CONSTRAINT users 
         FOREIGN KEY(user_id)
         REFERENCES users( user_id )

@@ -43,6 +43,62 @@ public class Game {
    * @param dex Total number of pokemon in pokedex
    */
   public Game(String title, int generation, int dex) {
-
+    this.title = title;
+    this.generation = generation;
+    this.dex = dex;
   }
+
+  /**
+   * Gets the game's id
+   * @return The game's id
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
+   * Gets the game's title
+   * @return The game title
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * Sets the game's title
+   * @param title The game's new title
+   */
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  /**
+   * Gets the game's generation
+   * @return The game generation
+   */
+  public int getGeneration() {
+    return generation;
+  }
+
+  public void setGeneration(int generation) {
+    this.generation = generation;
+  }
+
+  /**
+   * Returns the dex count for the current game
+   * @return 
+   */
+  public int getDex() {
+    return dex;
+  }
+
+  /**
+   * Sets the total dex count
+   * @param dex The new total dex count
+   */
+  public void setDex(int dex) {
+    this.dex = dex;
+  }
+
+  
 }
