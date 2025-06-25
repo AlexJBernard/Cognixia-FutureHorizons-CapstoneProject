@@ -1,26 +1,11 @@
 package com.cognixia.fh.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import com.cognixia.fh.dao.model.Game;
 
-public interface GameDao {
-
-  /**
-   * Establishes a connection with the MySQL database
-   * 
-   * @throws ClassNotFoundException The application does not contain the appropriate maven library.
-   * @throws SQLException The application cannot connect to the MySQL database.
-   */
-  public void establishConnection() throws ClassNotFoundException, SQLException;
-
-  /**
-   * Closes the connection to the MySQL datbase
-   * @throws SQLException
-   */
-  public void closeConnection() throws SQLException;
+public interface GameDao extends Dao {
 
   /**
    * Gets the game with a specific ID from the database
