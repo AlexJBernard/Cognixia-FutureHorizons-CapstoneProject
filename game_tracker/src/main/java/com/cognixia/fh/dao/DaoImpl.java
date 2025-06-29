@@ -17,13 +17,18 @@ public abstract class DaoImpl implements Dao {
 
     if (connection == null) {
       connection = ConnectionManager.getConnection();
+      System.out.println("Connection opened!");
     }
   }
 
   @Override
-  public void closeConnection() throws SQLException {
-    if (connection != null) {
-      connection.close();
+  public void closeConnection() {
+    try {
+        ConnectionManager.closeConnection();
+        System.out.println("Connection closed");
+        connection = null;
+    } catch (SQLException e) {
+      e.printStackTrace(System.out);
     }
   }
 }

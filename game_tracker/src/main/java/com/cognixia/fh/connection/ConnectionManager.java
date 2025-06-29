@@ -57,6 +57,13 @@ public class ConnectionManager {
     return connection;
   }
 
+  public static void closeConnection() throws SQLException {
+    if (connection != null) {
+      connection.close();
+      connection = null;
+    }
+  }
+
   public static void main(String[] args) {
     try (Connection connection = ConnectionManager.getConnection()) {
       System.out.println("CONNECTED");
