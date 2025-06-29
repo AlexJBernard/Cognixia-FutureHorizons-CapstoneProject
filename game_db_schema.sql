@@ -22,7 +22,7 @@ CREATE TABLE users (
 
 -- Game owned by a given user
 CREATE TABLE game_entries (
-    game_entry_id           INT PRIMARY KEY,
+    game_entry_id           INT PRIMARY KEY AUTO_INCREMENT,
     user_id                 INT NOT NULL,
     game_id                 INT NOT NULL,
     game_entry_num_caught   INT,

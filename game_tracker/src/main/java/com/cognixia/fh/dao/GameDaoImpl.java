@@ -64,7 +64,7 @@ public class GameDaoImpl extends DaoImpl implements GameDao {
   @Override
   public List<GameEntry> getByOwnerId(int userId) {
     List<GameEntry> result = new ArrayList<>();
-    String query = "SELECT * FROM pkmn_db.game_entries WHERE user_id = ? LEFT JOIN pkmn.db.games ON pkmn_db.game_entries.game_id = pkmn_db.games.game_id";
+    String query = "SELECT * FROM pkmn_db.game_entries LEFT JOIN pkmn_db.games ON pkmn_db.game_entries.game_id = pkmn_db.games.game_id\n WHERE user_id = 1";
 
     try (PreparedStatement stmnt = connection.prepareStatement(query)) {
       ResultSet rs = stmnt.executeQuery();
@@ -72,8 +72,14 @@ public class GameDaoImpl extends DaoImpl implements GameDao {
       while (rs.next()) {
         
         int gameId = rs.getInt(3);
+        Game nextGame = null;
         if (recordedGames.containsKey(gameId)) {
 
+        } else {
+          String title = rs.getString(7);
+          int generation = rs.getInt(8);
+          int dex = rs.getInt(9);
+          nextGame = new Game(gameId, title, generation, dex);
         }
         result.add(null);
       }

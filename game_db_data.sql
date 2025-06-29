@@ -1,7 +1,7 @@
 use pkmn_db;
 
 -- FILL POKEMON GAMES
-insert into pkmn_games(game_title, game_generation, game_dex) 
+insert into games(game_title, game_generation, game_dex) 
     values 
 
     -- GENERATION 1
@@ -61,3 +61,10 @@ INSERT INTO users(user_username, user_password)
     
     -- TEST USER
     ('test', 'test');
+
+-- FILL GAME ENTRIES
+INSERT INTO game_entries(user_id, game_id, game_entry_num_caught, game_entry_rating) 
+    VALUES 
+
+    (1, 1, 50, 5),
+    (2, 1, 75, 5);
