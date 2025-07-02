@@ -1,24 +1,19 @@
 package com.cognixia.fh.dao;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.sql.PreparedStatement;
 
 public interface Dao {
 
-  /**
-   * Establishes a connection with the MySQL database
-   * 
-   * @throws ClassNotFoundException The application does not contain the appropriate maven library.
-   * @throws SQLException The application cannot connect to the MySQL database.
-   * @throws FileNotFoundException The user has not implemented the app.config file correctly
-   * @throws IOException An error occured with the FileInputStream class
+  /** 
+   * Executes the chosen query. Releases Database connection once the operation has concluded.
+   * @param stmnt The PreparedStatement being executed.
+   * @return A prepared statement created from the 
    */
-  public void establishConnection() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException ;
+  public PreparedStatement openStatement(String query);
 
   /**
-   * Closes the connection to the MySQL datbase
-   * @throws SQLException
+   * Closes the DAO's current connection
+   * @return True if the connection was closed
    */
-  public void closeConnection() throws SQLException;
+  public boolean closeStatement();
 }

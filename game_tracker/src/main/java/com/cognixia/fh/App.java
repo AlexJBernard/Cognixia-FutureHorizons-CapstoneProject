@@ -3,6 +3,8 @@ package com.cognixia.fh;
 import java.util.Scanner;
 
 import com.cognixia.fh.account.AccountManager;
+import com.cognixia.fh.connection.ConnectionManager;
+import com.cognixia.fh.dao.model.GameEntry;
 
 /**
  * The App class is the main file used to collect user inputs
@@ -12,6 +14,8 @@ import com.cognixia.fh.account.AccountManager;
  */
 public class App 
 {
+
+    private static ConnectionManager connectionManager;
 
     private static final String EXIT_STRING = "Q";
 
@@ -30,6 +34,9 @@ public class App
 
     public static void main( String[] args )
     {
+
+        connectionManager = ConnectionManager.getInstance();
+
         try (Scanner scan = new Scanner(System.in)) {
             boolean isOpen = true;
 
@@ -83,6 +90,8 @@ public class App
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            connectionManager.closeConnections();
         }
     }
 
@@ -122,9 +131,19 @@ public class App
         MenuState result = MenuState.START;
         switch(input) {
             case "1": // View Owned Games
+                System.out.println("PRINTING OWNED GAMES");
+                if (AccountManager.getOwnedGames().isEmpty()) {
+                    System.out.println("NO GAMES");
+                }
+                for (GameEntry e : AccountManager.getOwnedGames()) {
+                    System.out.println(e.getGame().toString());
+                }
                 break;
             case "2": // Register a new game
 
+                break;
+            case "L":
+                result = MenuState.LOGIN;
                 break;
             default: // Error
                 System.out.println("ERROR: Invalid response");

@@ -100,5 +100,11 @@ public class Game {
     this.dex = dex;
   }
 
-  
+  @Override
+  public String toString() {
+    String output = this.title
+      .concat("\nGeneration: " + this.generation)
+      .concat("\nDex Count: " + this.dex);
+    return output;
+  }  
 }

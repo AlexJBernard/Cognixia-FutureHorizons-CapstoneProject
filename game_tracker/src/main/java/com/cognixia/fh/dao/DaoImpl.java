@@ -1,34 +1,37 @@
 package com.cognixia.fh.dao;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.cognixia.fh.connection.ConnectionManager;
 
 public abstract class DaoImpl implements Dao {
 
-  protected Connection connection = null;
-  
-  
-  @Override
-  public void establishConnection() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException {
+  private final ConnectionManager CONNECTIONS = ConnectionManager.getInstance();
 
-    if (connection == null) {
-      connection = ConnectionManager.getConnection();
-      System.out.println("Connection opened!");
+  private Connection connect;
+
+  @Override 
+  public PreparedStatement openStatement(String query) {
+
+    connect = CONNECTIONS.getConnection();
+    
+    try {
+      return connect.prepareStatement(query);
+    } catch( SQLException e) {
+      System.out.println("COULD NOT CREATE STATEMENT");
+      e.printStackTrace(System.out);
+      return null;
     }
   }
 
-  @Override
-  public void closeConnection() {
-    try {
-        ConnectionManager.closeConnection();
-        System.out.println("Connection closed");
-        connection = null;
-    } catch (SQLException e) {
-      e.printStackTrace(System.out);
+  @Override 
+  public boolean closeStatement() {
+    if (connect != null) {
+      return CONNECTIONS.releaseConnection(connect);
+    } else {
+      return false;
     }
   }
 }
