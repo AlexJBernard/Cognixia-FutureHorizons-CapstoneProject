@@ -1,10 +1,10 @@
 package com.cognixia.fh.account;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import com.cognixia.fh.dao.GameDaoImpl;
+import com.cognixia.fh.dao.GameEntryDaoImpl;
 import com.cognixia.fh.dao.UserDaoImpl;
 import com.cognixia.fh.dao.model.Game;
 import com.cognixia.fh.dao.model.GameEntry;
@@ -27,23 +27,14 @@ public class AccountManager {
 
   private static final GameDaoImpl GAME_DAO = new GameDaoImpl();
 
+  private static final GameEntryDaoImpl GAME_ENTRY_DAO = new GameEntryDaoImpl();
+
 
   public static boolean validateUsername(String username) {
 
-    boolean userFound = false;
-
-    try {
-      USER_DAO.establishConnection();
-
-      Optional<User> response = USER_DAO.findByUsername(username);
-      userFound = !response.isEmpty();
-
-      USER_DAO.closeConnection();
-    } catch (Exception e) {
-      e.printStackTrace(System.out);
-    }
+    Optional<User> response = USER_DAO.findByUsername(username);
     
-    return userFound;
+    return !response.isEmpty();
   }
 
   /**
@@ -52,25 +43,12 @@ public class AccountManager {
    * @param password The user's password
    */
   public static void attemptLogin(String username, String password) {
-    User user = null;
-    try {
-        USER_DAO.establishConnection();
-
-        user = USER_DAO.findByUsername(username).get();
-
-        USER_DAO.closeConnection();
-        
-    } catch (ClassNotFoundException e) {
-      System.out.println("Maven MySQL package not installed!");
-    } catch (SQLException e) {
-      System.out.println("Error connecting to SQL Database");
-    }catch (Exception e) {
-      e.printStackTrace(System.out);
-    }
+    User user = USER_DAO.findByUsername(username).get();
 
     if (user != null && user.getPassword().equals(password)) {
       currentUser = user;
       System.out.println("LOGIN SUCCESS");
+      ownedGames = GAME_ENTRY_DAO.getByOwnerId(currentUser);
     }
   }
 
@@ -79,7 +57,7 @@ public class AccountManager {
    * @return
    */
   public static boolean isLoggedIn() {
-    return currentUser == null;
+    return currentUser != null;
   }
 
   /**
@@ -102,7 +80,7 @@ public class AccountManager {
    * 
    * @return
    */
-  public static List<GameEntry> ownedGames() {
+  public static List<GameEntry> getOwnedGames() {
     return ownedGames;
   }
 

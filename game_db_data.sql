@@ -67,4 +67,6 @@ INSERT INTO game_entries(user_id, game_id, game_entry_num_caught, game_entry_rat
     VALUES 
 
     (1, 1, 50, 5),
+    (1, 2, 50, 4),
+    (1, 4, 50, 4),
     (2, 1, 75, 5);

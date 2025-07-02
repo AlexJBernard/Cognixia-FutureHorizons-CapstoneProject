@@ -9,6 +9,8 @@ import com.cognixia.fh.dao.model.User;
 
 public class UserDaoImpl extends DaoImpl implements UserDao {
 
+  private final String BASEQUERY = "SELECT * FROM pkmn_db.users";
+
   private User extractResult(ResultSet rs) throws SQLException {
     int id = rs.getInt(1);
     String username = rs.getString(2);
@@ -19,9 +21,11 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
   
   @Override
   public Optional<User> getById(int id) {
-    String query = "SELECT * FROM pkmn_db.users WHERE user_id = ?";
+    String query = BASEQUERY + " WHERE user_id = ?";
 
-    try (PreparedStatement stmnt = connection.prepareStatement(query)) {
+    try (PreparedStatement stmnt = openStatement(query)) {
+
+      stmnt.setInt(1, id);
       ResultSet rs = stmnt.executeQuery();
       if (rs.next()) {
         return Optional.of(extractResult(rs));
@@ -30,16 +34,21 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
       }
     } catch (Exception e) {
       e.printStackTrace(System.out);
+    } finally {
+      closeStatement();
     }
     return Optional.empty();
   }
 
   @Override
   public Optional<User> findByUsername(String username) {
-    String query = "SELECT * FROM pkmn_db.users WHERE user_username = ?";
-    try (PreparedStatement stmnt = connection.prepareStatement(query)) {
+    String query = BASEQUERY + " WHERE user_username = ?";
+
+    try (PreparedStatement stmnt = openStatement(query)) {
+
       stmnt.setString(1, username);
       ResultSet rs = stmnt.executeQuery();
+
       if (rs.next()) {
         return Optional.of(extractResult(rs));
       } else {
@@ -48,11 +57,26 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
     } catch (Exception e) {
       e.printStackTrace(System.out);
       return Optional.empty();
+    } finally {
+      closeStatement();
     }
   }
 
   @Override
   public boolean createUser(User user) {
-    return false;
+    String insertQuery = "INSERT INTO pkmn_db.users(user_username, user_password)";
+    boolean wasCreated = false;
+
+    try (PreparedStatement stmnt = openStatement(insertQuery)) {
+
+      stmnt.setString(1, user.getUsername());
+      stmnt.setString(2, user.getPassword());
+      wasCreated = stmnt.executeUpdate() > 0;
+    } catch (Exception e) {
+      e.printStackTrace(System.out);
+    } finally {
+      closeStatement();
+    }
+    return wasCreated;
   }
 }
