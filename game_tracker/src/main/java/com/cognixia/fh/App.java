@@ -1,10 +1,13 @@
 package com.cognixia.fh;
 
+import java.util.List;
 import java.util.Scanner;
 
 import com.cognixia.fh.account.AccountManager;
 import com.cognixia.fh.connection.ConnectionManager;
+import com.cognixia.fh.dao.model.Game;
 import com.cognixia.fh.dao.model.GameEntry;
+import com.cognixia.fh.exception.NoResultsException;
 
 /**
  * The App class is the main file used to collect user inputs
@@ -15,6 +18,66 @@ import com.cognixia.fh.dao.model.GameEntry;
 public class App 
 {
 
+    /**
+     * Inner class used when displaying a list of games as an option for the user to click. Used to accomodate the limited space of the terminal window.
+     */
+    public static class GameDisplay {
+        
+        private final int PAGE_SIZE = 5;
+
+        /** List of games to be displayed. */
+        private Game[][] gameBook = null;
+
+        /** */
+        private int currentPage = 0;
+
+        /**
+         * Creates a 2D array for the app to display games
+         * @param games 
+         */
+        public void setGameBook(List<Game> games) {
+            // Reset Values
+            currentPage = 0;
+
+            // Determine the number of pages in the 'book'
+            int numPages = games.size() / 5;
+            if (games.size() % 5 > 0) numPages += 1;
+
+            gameBook = new Game[numPages][PAGE_SIZE];
+            for (int i = 0; i < gameBook.length; i++) {
+                int checkSize = i * 5;
+                
+                for (int j = 0; j < gameBook[0].length && checkSize + j < games.size(); j++) {
+                    gameBook[i][j] = games.get(checkSize + j);
+                }
+            }
+        }
+
+        /**
+         * Returns the next 'page' of games
+         * @return
+         */
+        public Game[] getPage() {
+            if (gameBook != null) {
+                return gameBook[currentPage];
+            } else {
+                return null;
+            }
+        }
+
+        public void nextPage() {
+            if (gameBook != null) {
+                currentPage += 1;
+                if (currentPage >= gameBook.length) {
+                    currentPage = 0;
+                }
+            }
+        }
+    }
+
+    private static final GameDisplay gameDisplay = new GameDisplay();
+
+    /** Manages all connections to the database */
     private static ConnectionManager connectionManager;
 
     private static final String EXIT_STRING = "Q";
@@ -27,7 +90,13 @@ public class App
         LOGIN,
 
         /** Start Menu state */
-        START;
+        START,
+        
+        /** Add Game Menu state */
+        ADD,
+        
+        /** Edit Game Menu state */
+        EDIT;
     }
 
 
@@ -58,6 +127,21 @@ public class App
                         System.out.println("L - Log Out");
                         System.out.println("Q - Quit");
                         break;
+                    case ADD: 
+                        System.out.println("Select a game to add");
+                        Game[] display = gameDisplay.getPage();
+                        int i = 0;
+                        for (Game g : display) {
+                            if (g != null) {
+                                System.out.printf("%d - %s\n", i, g.getTitle());
+                                i++;
+                            } else {
+                                break;
+                            }
+                        }
+                        System.out.println("\nN - Next Page");
+                        System.out.println("C - Cancel Action");
+                        System.out.println("Q - QUIT APP");
                     default:
                         break;
                 }
@@ -80,7 +164,10 @@ public class App
                             }
                             break;
                         case START:
-                            menu = inputStartMenu(input, scan);
+                            menu = inputStartMenu(input);
+                            break;
+                        case ADD:
+                            menu = inputAddMenu(input);
                             break;
                         default: // Error
                             break;
@@ -127,22 +214,40 @@ public class App
      * @param scan
      * @return
      */
-    private static MenuState inputStartMenu( String input, Scanner scan) {
+    private static MenuState inputStartMenu( String input ) {
         MenuState result = MenuState.START;
         switch(input) {
             case "1": // View Owned Games
                 System.out.println("PRINTING OWNED GAMES");
-                if (AccountManager.getOwnedGames().isEmpty()) {
-                    System.out.println("NO GAMES");
-                }
-                for (GameEntry e : AccountManager.getOwnedGames()) {
-                    System.out.println(e.getGame().toString());
+                try {
+                    List<GameEntry> games = AccountManager.getOwnedGames();
+                    for (GameEntry e : games) {
+                        System.out.println(e.getGame().toString());
+                    }
+                } catch (NoResultsException e) {
+                    System.out.println(e.getMessage());
                 }
                 break;
             case "2": // Register a new game
-
+                /**
+                 * 1: Collect all unowned games
+                 * 2: Display up to 5 games at a time for the user to add
+                 * 3: Add game to user's list as unfinished
+                 */
+                try {
+                    List<Game> games = AccountManager.getUnownedGames();
+                    if (!games.isEmpty()) {
+                        gameDisplay.setGameBook(games);
+                        result = MenuState.ADD;
+                    }
+                } catch (NoResultsException e) {
+                    System.out.println(e.getMessage());
+                }
+                
+                // SUBMENU: ADD
                 break;
-            case "L":
+            case "L": // LOGOUT
+                AccountManager.logout();
                 result = MenuState.LOGIN;
                 break;
             default: // Error
@@ -150,6 +255,29 @@ public class App
                 break;
         }
 
+        return result;
+    }
+
+    private static MenuState inputAddMenu( String input) {
+        MenuState result = MenuState.ADD;
+        switch (input) {
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+                int index = Integer.parseInt(input);
+                System.out.println(gameDisplay.getPage()[index].toString());
+                result = MenuState.START;
+                break;
+            case "N":
+                gameDisplay.nextPage();
+                break;
+            case "C":
+                result = MenuState.START;
+            default: 
+                break;
+        }
         return result;
     }
 }

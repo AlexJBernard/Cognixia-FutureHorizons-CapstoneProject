@@ -126,5 +126,4 @@ public class GameEntryDaoImpl extends DaoImpl implements GameEntryDao {
   public List<GameEntry> getByGameId(int gameId) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
 }

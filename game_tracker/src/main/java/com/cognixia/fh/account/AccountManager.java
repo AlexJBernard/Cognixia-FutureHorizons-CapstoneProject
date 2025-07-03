@@ -9,19 +9,14 @@ import com.cognixia.fh.dao.UserDaoImpl;
 import com.cognixia.fh.dao.model.Game;
 import com.cognixia.fh.dao.model.GameEntry;
 import com.cognixia.fh.dao.model.User;
+import com.cognixia.fh.exception.NoResultsException;
 
 /**
- * Collects all information associated with the given user
+ * Collects all information associated with the current user.
  */
 public class AccountManager {
   /** The user that's currently logged in */
   private static User currentUser;
-
-  /** List of games owned by the current user */
-  private static List<GameEntry> ownedGames;
-
-  /** An array of max length 10 arrays listing every game not owned by the user */
-  private static Game[][] unownedGames;
 
   private static final UserDaoImpl USER_DAO = new UserDaoImpl();
 
@@ -48,7 +43,6 @@ public class AccountManager {
     if (user != null && user.getPassword().equals(password)) {
       currentUser = user;
       System.out.println("LOGIN SUCCESS");
-      ownedGames = GAME_ENTRY_DAO.getByOwnerId(currentUser);
     }
   }
 
@@ -72,16 +66,33 @@ public class AccountManager {
    * Lists all games not owned by the current user
    * @return
    */
-  public static Game[][] getUnownedGames() {
+  public static List<Game> getUnownedGames() throws NoResultsException {
+    List<Game> unownedGames = GAME_DAO.getAllUnownedGames(currentUser.getId());
+    if (unownedGames.isEmpty()) {
+      throw new NoResultsException("No games found");
+    }
+
     return unownedGames;
   }
 
   /**
-   * 
+   * Obtains a list of the user's games as specified in the 
    * @return
    */
-  public static List<GameEntry> getOwnedGames() {
+  public static List<GameEntry> getOwnedGames() throws NoResultsException {
+
+    List<GameEntry> ownedGames = GAME_ENTRY_DAO.getByOwnerId(currentUser);
+
+    if (ownedGames.isEmpty()) {
+      throw new NoResultsException(String.format("The user %s has no games", currentUser.getUsername()));
+    }
+
     return ownedGames;
+  }
+
+  public static boolean registerGame(Game newGame) {
+      
+    return false;
   }
 
   public static void logout() {
