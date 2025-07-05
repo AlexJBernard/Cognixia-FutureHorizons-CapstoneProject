@@ -43,6 +43,8 @@ public class GameDaoImpl extends DaoImpl implements GameDao {
     } catch (Exception e) {
       e.printStackTrace(System.out);
       return Optional.empty();
+    } finally {
+      closeStatement();
     }
   }
 
@@ -62,13 +64,16 @@ public class GameDaoImpl extends DaoImpl implements GameDao {
     } catch (SQLException e) {
       e.printStackTrace(System.out);
       System.out.println("Error connecting to database!\nResults may not reflect the user's list");
+    } finally {
+      closeStatement();
     }
 
     return games;
   }
 
   public List<Game> getAllUnownedGames(int user_id) {
-    String query = BASE_QUERY + " WHERE NOT EXISTS (SELECT * FROM pkmn_db.game_entries WHERE pkmn_db.game_entries.game_id = pkmn_db.games.game_id = pkmn_db.game_entries.game_id AND pkmn_db.game_entries.user_id = ?)";
+    String query = BASE_QUERY + " WHERE NOT EXISTS (SELECT * FROM pkmn_db.game_entries WHERE pkmn_db.game_entries.game_id = pkmn_db.games.game_id AND pkmn_db.game_entries.user_id = ?)";
+    System.out.println();
 
     List<Game> games = new ArrayList<>();
 
@@ -82,6 +87,8 @@ public class GameDaoImpl extends DaoImpl implements GameDao {
     } catch (SQLException e) {
       e.printStackTrace(System.out);
       System.out.println("Error connecting to database!\nResults may not reflect the user's list");
+    } finally {
+      closeStatement();
     }
 
     return games;

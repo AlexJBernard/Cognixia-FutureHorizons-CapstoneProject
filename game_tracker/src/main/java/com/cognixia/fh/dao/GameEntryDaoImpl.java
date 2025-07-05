@@ -75,7 +75,6 @@ public class GameEntryDaoImpl extends DaoImpl implements GameEntryDao {
     String title = rs.getString(7);
     int generation = rs.getInt(8);
     int dex = rs.getInt(9);
-    System.out.println(title);
 
     return new Game(gameId, title, generation, dex);
   }
@@ -117,6 +116,8 @@ public class GameEntryDaoImpl extends DaoImpl implements GameEntryDao {
       }
     } catch (Exception e) {
       e.printStackTrace(System.out);
+    } finally {
+      closeStatement();
     }
 
     return entries;
@@ -125,5 +126,59 @@ public class GameEntryDaoImpl extends DaoImpl implements GameEntryDao {
   @Override
   public List<GameEntry> getByGameId(int gameId) {
     throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  public boolean insertGameEntry(GameEntry entry) {
+    String query = "INSERT INTO pkmn_db.game_entries(user_id, game_id, game_entry_num_caught, game_entry_rating) VALUES (?, ?, 0, 1)";
+
+    try (PreparedStatement stmnt = openStatement(query)) {
+      stmnt.setInt(1, entry.getUser().getId());
+      stmnt.setInt(2, entry.getGame().getId());
+      int updated = stmnt.executeUpdate();
+      return updated > 0;
+    } catch (Exception e) {
+      e.printStackTrace(System.out);
+      return false;
+    } finally {
+      closeStatement();
+    }
+  }
+
+  public boolean updateGameEntry(GameEntry entry) {
+    String query = "UPDATE pkmn_db.game_entries SET game_entry_num_caught = ?, game_entry_rating = ? WHERE pkmn_db.game_entries.game_entry_id = ?";
+
+    try (PreparedStatement stmnt = openStatement(query)) {
+      stmnt.setInt(1, entry.getNumCaught());
+      stmnt.setInt(2, entry.getRating());
+      stmnt.setInt(3, entry.getId());
+
+      int updated = stmnt.executeUpdate();
+      return updated > 0;
+    } catch (Exception e) {
+      
+    } finally {
+      closeStatement();
+    }
+    return false;
+  }
+
+  /**
+   * Removes the GameEntry with the given id from the database
+   * @param entryId
+   * @return
+   */
+  public boolean removeGameEntry(int entryId) {
+    String query = "DELETE FROM pkmn_db.game_entries WHERE pkmn_db.game_entries.game_entry_id = ?";
+
+    try (PreparedStatement stmnt = openStatement(query)) {
+      stmnt.setInt(1, entryId);
+      int updated = stmnt.executeUpdate();
+      return updated > 0;
+    } catch (Exception e) {
+      e.printStackTrace(System.out);
+      return false;
+    } finally {
+      closeStatement();
+    }
   }
 }

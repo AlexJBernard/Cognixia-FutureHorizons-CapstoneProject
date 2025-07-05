@@ -64,7 +64,7 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
 
   @Override
   public boolean createUser(User user) {
-    String insertQuery = "INSERT INTO pkmn_db.users(user_username, user_password)";
+    String insertQuery = "INSERT INTO pkmn_db.users(user_username, user_password) VALUES (?, ?)";
     boolean wasCreated = false;
 
     try (PreparedStatement stmnt = openStatement(insertQuery)) {

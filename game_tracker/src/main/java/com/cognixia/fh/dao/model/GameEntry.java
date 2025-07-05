@@ -27,6 +27,13 @@ public class GameEntry {
     this.user = user;
   }
 
+  public GameEntry(int numCaught, int rating, Game game, User user) {
+    this.numCaught = numCaught;
+    this.rating = rating;
+    this.game = game;
+    this.user = user;
+  }
+
   public int getId() {
     return id;
   }
@@ -86,5 +93,16 @@ public class GameEntry {
    */
   public double getCompletionStatus() {
     return ((double) this.numCaught) / this.getGame().getDex();
+  }
+
+  /**
+   * 
+   */
+  @Override
+  public String toString() {
+    String output = this.game.getTitle() + "\n";
+    output += "Pokemon Caught:\n\t" + this.numCaught + " / " + this.game.getDex() + "\n";
+    output += "User Rating:\n\t" + this.rating + " / 5";
+    return output;
   }
 }

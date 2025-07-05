@@ -63,7 +63,6 @@ public final class ConnectionManager {
     Class.forName("com.mysql.cj.jdbc.Driver");
 
     for (int i = 0; i < POOL_SIZE; i++) {
-      System.out.println("MAKE CONNECTION: " + (i + 1));
       connectionPool.add(makeConnection());
     }
   }
@@ -133,7 +132,6 @@ public final class ConnectionManager {
   }
 
   public void closeConnections() {
-    System.out.println("CLOSING ALL");
     while (!usedConnections.isEmpty()) {
       this.releaseConnection(usedConnections.get(0));
     }
@@ -141,7 +139,7 @@ public final class ConnectionManager {
     for (Connection c : connectionPool) {
       try {
         c.close();
-      } catch (Exception e) {
+      } catch (SQLException e) {
         e.printStackTrace(System.out);
       }
     }
