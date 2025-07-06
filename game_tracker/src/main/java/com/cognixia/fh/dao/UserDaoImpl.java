@@ -9,8 +9,14 @@ import com.cognixia.fh.dao.model.User;
 
 public class UserDaoImpl extends DaoImpl implements UserDao {
 
-  private final String BASEQUERY = "SELECT * FROM pkmn_db.users";
+  private final String BASEQUERY = "SELECT * FROM users";
 
+  /**
+   * Creates a new User object from the current row of the ResultSet
+   * @param rs The ResultSet being evaluated
+   * @return A new User object
+   * @throws SQLException Thrown if data cannot be extracted from the ResultSet
+   */
   private User extractResult(ResultSet rs) throws SQLException {
     int id = rs.getInt(1);
     String username = rs.getString(2);
@@ -64,7 +70,7 @@ public class UserDaoImpl extends DaoImpl implements UserDao {
 
   @Override
   public boolean createUser(User user) {
-    String insertQuery = "INSERT INTO pkmn_db.users(user_username, user_password) VALUES (?, ?)";
+    String insertQuery = "INSERT INTO users(user_username, user_password) VALUES (?, ?)";
     boolean wasCreated = false;
 
     try (PreparedStatement stmnt = openStatement(insertQuery)) {

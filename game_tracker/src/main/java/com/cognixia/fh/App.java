@@ -246,8 +246,8 @@ public class App
                         System.out.println("1 - View Owned Games");
                         System.out.println("2 - Register Game");
                         System.out.println("3 - View In-Progress Games");
-                        System.out.println("4 - View Games to Start");
-                        System.out.println("5 - View Completed games");
+                        System.out.println("4 - View Unopened Games");
+                        System.out.println("5 - View Completed games\n");
                         System.out.println("L - Log Out");
                         break;
                     case ADD: 
@@ -395,11 +395,6 @@ public class App
                 }
                 break;
             case "2": // Register a new game
-                /**
-                 * 1: Collect all unowned games
-                 * 2: Display up to 5 games at a time for the user to add
-                 * 3: Add game to user's list as unfinished
-                 */
                 try {
                     List<Game> games = AccountManager.getUnownedGames();
                     if (!games.isEmpty()) {
@@ -411,45 +406,37 @@ public class App
                 }
                 
                 break;
-            // IN-PROGRESS
-            case "3":
+                
+            case "3": // List In-Progress Games
                 try {
                     List<GameEntry> games = AccountManager.getGamesInProgress();
                     entryDisplay.setBook(games);
-                    for (GameEntry e : games) {
-                        System.out.println(e.getGame().toString());
-                    }
                     result = MenuState.SELECT;
                 } catch (NoResultsException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
-            // NOT STARTED
-            case "4":
+                
+            case "4": // List Unopened Games
                 try {
                     List<GameEntry> games = AccountManager.getGamesUnopened();
                     entryDisplay.setBook(games);
-                    for (GameEntry e : games) {
-                        System.out.println(e.getGame().toString());
-                    }
                     result = MenuState.SELECT;
                 } catch (NoResultsException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
-            // COMPLETE
-            case "5":
+
+            case "5": // List Complete Games
                 try {
-                    List<GameEntry> games = AccountManager.getGamesCompleted();
+                    List<GameEntry> games = AccountManager.getGamesCompleted2();
                     entryDisplay.setBook(games);
-                    for (GameEntry e : games) {
-                        System.out.println(e.getGame().toString());
-                    }
                     result = MenuState.SELECT;
                 } catch (NoResultsException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
+
             // OTHER
             case "L": // LOGOUT
                 AccountManager.logout();
@@ -466,7 +453,7 @@ public class App
     /**
      * Processes input for the Add Menu
      * @param input User input on the Add Menu screen
-     * @return
+     * @return The new MenuState after the interaction completes
      */
     private static MenuState inputAddMenu( String input ) {
         MenuState result = MenuState.ADD;
@@ -502,7 +489,7 @@ public class App
     /**
      * Process input for the Select Menu
      * @param input The last input given by the user
-     * @return
+     * @return The new MenuState after the interaction completes
      */
     private static MenuState inputSelectMenu( String input ) {
         MenuState result = MenuState.START;
@@ -541,9 +528,9 @@ public class App
      * Delete Entry
      * Cancel action
      * 
-     * @param input
+     * @param input The user's last input
      * @param scan Used for options 
-     * @return
+     * @return The new MenuState after the interaction completes
      */
     private static MenuState inputEditMenu( String input, Scanner scan ) {
         MenuState result = MenuState.START;

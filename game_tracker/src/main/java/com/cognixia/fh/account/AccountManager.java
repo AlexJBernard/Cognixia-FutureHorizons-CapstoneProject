@@ -73,7 +73,7 @@ public class AccountManager {
 
   /**
    * Lists all games not owned by the current user
-   * @return
+   * @return An ArrayList containing all games not owned by the user
    */
   public static List<Game> getUnownedGames() throws NoResultsException {
     List<Game> unownedGames = GAME_DAO.getAllUnownedGames(currentUser.getId());
@@ -85,7 +85,7 @@ public class AccountManager {
   }
 
   /**
-   * Obtains a list of the user's games as specified in the 
+   * Obtains a list of the user's games as specified in the database
    * @return A list of all GameEntries where the currentUser is the designated owner
    */
   public static List<GameEntry> getOwnedGames() throws NoResultsException {
@@ -100,9 +100,9 @@ public class AccountManager {
   }
 
   /**
-   * Returns a list of games that are currently "in progress"
-   * @return
-   * @throws NoResultsException
+   * Returns a list of "in-progress" games using the StreamAPI
+   * @return An array list of the user's in-progress games
+   * @throws NoResultsException If the user has no in-progress games
    */
   public static List<GameEntry> getGamesInProgress() throws NoResultsException {
     List<GameEntry> gamesInProgress = getOwnedGames()
@@ -114,6 +114,24 @@ public class AccountManager {
     return gamesInProgress;
   }
 
+  /**
+   * Uses the GameDaoImpl class to obtain a list of games the user has completed
+   * @return A list of the users completed games
+   * @throws NoResultsException If the user has no completed games
+   */
+  public static List<GameEntry> getGamesCompleted2() throws NoResultsException {
+    List<GameEntry> gamesComplete = GAME_ENTRY_DAO.getCompletedByOwnerId(currentUser);
+
+    if (gamesComplete.isEmpty()) throw new NoResultsException(String.format("The user %s has no complete games", currentUser.getUsername()));
+
+    return gamesComplete;
+  }
+
+  /**
+   * Uses the StreamAPI to obtain a list of the user's unopened games
+   * @return An ArrayList of the user's unopened games
+   * @throws NoResultsException If the user has no unopened games
+   */
   public static List<GameEntry> getGamesUnopened() throws NoResultsException {
     List<GameEntry> gamesUnopened = getOwnedGames()
       .stream().filter(g -> g.getNumCaught() == 0)
@@ -124,6 +142,11 @@ public class AccountManager {
     return gamesUnopened;
   }
 
+  /**
+   * Uses the StreamAPI to obtain a list of the user's complete games
+   * @return An ArrayList of the user's complete games
+   * @throws NoResultsException If the user has no completed games
+   */
   public static List<GameEntry> getGamesCompleted() throws NoResultsException {
     List<GameEntry> gamesComplete = getOwnedGames()
       .stream().filter(g -> g.getNumCaught() == g.getGame().getDex())
