@@ -101,6 +101,7 @@ public class GameEntry {
   @Override
   public String toString() {
     String output = this.game.getTitle() + "\n";
+    output += "Generation: " + this.game.getGeneration() + '\n';
     output += "Pokemon Caught:\n\t" + this.numCaught + " / " + this.game.getDex() + "\n";
     output += "User Rating:\n\t" + this.rating + " / 5";
     return output;

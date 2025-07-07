@@ -243,8 +243,8 @@ public class App
                         break;
                     case START:
                         System.out.printf("You are logged in as:\n%s\n", AccountManager.getCurrentUser().getUsername());
-                        System.out.println("1 - View Owned Games");
-                        System.out.println("2 - Register Game");
+                        System.out.println("1 - Register Game");
+                        System.out.println("2 - View Owned Games");
                         System.out.println("3 - View In-Progress Games");
                         System.out.println("4 - View Unopened Games");
                         System.out.println("5 - View Completed games\n");
@@ -276,7 +276,7 @@ public class App
                         break;
                     case EDIT:
                         System.out.println(entryDisplay.getCurrentEntry().toString());
-                        System.out.println("Select a field to edit");
+                        System.out.println("\nSelect a field to edit");
                         System.out.println("P - Pokemon Caught");
                         System.out.println("R - Rating");
                         System.out.println("D - Delete\n");
@@ -386,7 +386,7 @@ public class App
     private static MenuState inputStartMenu( String input ) {
         MenuState result = MenuState.START;
         switch(input) {
-            case "1": // View Owned Games
+            case "2": // View Owned Games
                 try {
                     List<GameEntry> games = AccountManager.getOwnedGames();
                     entryDisplay.setBook(games);
@@ -395,7 +395,7 @@ public class App
                     System.out.println(e.getMessage());
                 }
                 break;
-            case "2": // Register a new game
+            case "1": // Register a new game
                 try {
                     List<Game> games = AccountManager.getUnownedGames();
                     if (!games.isEmpty()) {
@@ -558,7 +558,7 @@ public class App
         GameEntry mayEdit = entryDisplay.getCurrentEntry();
         switch( input ) {
             case "P": // Input the number of pokemon caught
-                System.out.printf("Enter new Number of Pokemon (out of %s)\n", mayEdit.getGame().getDex());
+                System.out.printf("Enter the new number of Pokemon caught (From 0 to %s): ", mayEdit.getGame().getDex());
                 String inputCaught = scan.nextLine();
                 try {
                     int newCaught = Integer.parseInt(inputCaught);
@@ -574,12 +574,12 @@ public class App
                 }
                 break;
             case "R":
-                System.out.println("Enter the new rating 1- 5");
+                System.out.print("Enter the new rating (1 - 5): ");
                 String inputRating = scan.nextLine();
                 try {
                     int newRating = Integer.parseInt(inputRating);
 
-                    if (newRating < 0 || newRating > 5) throw new OutOfBoundsException("Value must be a positive integer less 6 and greater than 0");
+                    if (newRating <= 0 || newRating > 5) throw new OutOfBoundsException("Value must be a positive integer less 6 and greater than 0");
 
                     mayEdit.setRating(newRating);
                     AccountManager.updateGameEntry(mayEdit);
