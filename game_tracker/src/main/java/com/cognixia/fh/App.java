@@ -261,7 +261,8 @@ public class App
                                 break;
                             }
                         }
-                        System.out.println("\nN - Next Page");
+                        System.out.println("\nF - Filter by Generation");
+                        System.out.println("N - Next Page");
                         System.out.println("C - Cancel Action");
                         break;
                     case SELECT:
@@ -302,7 +303,7 @@ public class App
                             menu = inputStartMenu(input);
                             break;
                         case ADD:
-                            menu = inputAddMenu(input);
+                            menu = inputAddMenu(input, scan);
                             break;
                         case SELECT: 
                             menu = inputSelectMenu(input);
@@ -339,7 +340,7 @@ public class App
 
         switch(input) {
             case("1"): // Login process
-                System.out.println("INSERT USERNAME: ");
+                System.out.print("INSERT USERNAME: ");
                 username = scan.nextLine();
 
                 if (AccountManager.validateUsername(username)) {
@@ -354,7 +355,7 @@ public class App
                 }
                 break;
             case("2"):
-                System.out.println("INSERT USERNAME: ");
+                System.out.print("INSERT USERNAME: ");
                 username = scan.nextLine();
 
                 if (!AccountManager.validateUsername(username)) {
@@ -455,7 +456,7 @@ public class App
      * @param input User input on the Add Menu screen
      * @return The new MenuState after the interaction completes
      */
-    private static MenuState inputAddMenu( String input ) {
+    private static MenuState inputAddMenu( String input, Scanner scan ) {
         MenuState result = MenuState.ADD;
         switch (input) {
             case "0":
@@ -474,6 +475,26 @@ public class App
                     }
                 }
                 result = MenuState.START;
+                break;
+            case "F":
+                System.out.print("Enter a generation to view: ");
+                String inputCaught = scan.nextLine();
+                try {
+                    int filterGen = Integer.parseInt(inputCaught);
+
+                    if (filterGen < 0) throw new OutOfBoundsException("Value must be a positive integer");
+
+                    List<Game> found = AccountManager.getUnownedGames(filterGen);
+                    gameDisplay.setGameBook(AccountManager.getUnownedGames(filterGen));
+                    System.out.println(found.size());
+                    result = MenuState.ADD;
+                } catch(NoResultsException e) {
+                    System.out.println(e.getMessage());
+                } catch (NumberFormatException e) {
+                    System.out.println("ERROR: Must Input an integer");
+                } catch (OutOfBoundsException e) {
+                    System.out.print(e.getMessage());
+                }
                 break;
             case "N":
                 gameDisplay.nextPage();

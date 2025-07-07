@@ -1,7 +1,6 @@
-# COGNIXIA FUTURE HORIZONS CAPSTONE PROJECT
-## POKEMON-GAME PROGRESS TRACKER
+# COGNIXIA FUTURE HORIZONS CAPSTONE PROJECT<br>Pokemon Game Progress-Tracker
 
-The following program tracks a user's completion status of various pokemon game based on the number of pokemon they have registered in each game.
+The following program tracks a user's completion status of various pokemon game based on how many pokemon they caught in each game.
 
 ## Table of Contents
 - [Purpose](##Purpose)
@@ -9,7 +8,7 @@ The following program tracks a user's completion status of various pokemon game 
 - [Functions](##Functions)
 
 ## Purpose
-This project was created as a part of Cognixia's Future Horizons upskilling course to demonstrate an understanding of Java and MySQL on an intermediate level. 
+This project was created as a part of Cognixia's Future Horizons upskilling course to demonstrate an intermediate understanding of Java and MySQL development. 
 
 ## Requirements
 This project requires the following in order to run properly.
@@ -24,6 +23,7 @@ A running MySQL database is required for this project to run correctly. The repo
 Before running this project, the user must create an app.config file, containing the credentials for the database.
 
 The file `/game-tracker/app.config.template` acts as a guideline for how this file should be formatted. The .config file must contain the url, username, and password for the associated database in the following format (exclude brackets).
+
 ```
 database_url=jdbc:mysql://[url]
 username=[username]

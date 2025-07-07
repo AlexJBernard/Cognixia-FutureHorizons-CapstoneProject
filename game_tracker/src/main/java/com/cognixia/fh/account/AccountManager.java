@@ -84,6 +84,16 @@ public class AccountManager {
     return unownedGames;
   }
 
+  public static List<Game> getUnownedGames(int generation) throws NoResultsException {
+    List<Game> unownedGames = GAME_DAO.getUnownedGamesByGeneration(currentUser.getId(), generation);
+
+    if (unownedGames.isEmpty()) {
+      throw new NoResultsException(String.format("No games found in generation %s", generation));
+    } else {
+      return unownedGames;
+    }
+  }
+
   /**
    * Obtains a list of the user's games as specified in the database
    * @return A list of all GameEntries where the currentUser is the designated owner

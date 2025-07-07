@@ -93,4 +93,27 @@ public class GameDaoImpl extends DaoImpl implements GameDao {
 
     return games;
   }
+
+  public List<Game> getUnownedGamesByGeneration(int user_id, int generation) {
+    String query = BASE_QUERY + " WHERE NOT EXISTS (SELECT * FROM pkmn_db.game_entries WHERE pkmn_db.game_entries.game_id = pkmn_db.games.game_id AND pkmn_db.game_entries.user_id = ?) AND pkmn_db.games.game_generation = ?";
+
+    List<Game> games = new ArrayList<>();
+
+    try (PreparedStatement stmnt = openStatement(query)) {
+
+      stmnt.setInt(1, user_id);
+      stmnt.setInt(2, generation);
+      ResultSet rs = stmnt.executeQuery();
+      while (rs.next()) {
+        games.add(extractResult(rs));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace(System.out);
+      System.out.println("Error connecting to database!\nResults may not reflect the user's list");
+    } finally {
+      closeStatement();
+    }
+
+    return games;
+  }
 }
