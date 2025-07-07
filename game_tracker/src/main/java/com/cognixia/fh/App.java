@@ -20,21 +20,23 @@ public class App
 {
 
     /**
-     * Inner class used when displaying a list of games as an option for the user to click. Used to accomodate the limited space of the terminal window.
+     * Inner class used when displaying a list of games as an option for the user to register. 
+     * 
+     * Used to accomodate the limited space of the terminal window.
      */
     public static class GameDisplay {
-        
+        /** Total number of games to store on each 'page' */
         private final int PAGE_SIZE = 5;
 
         /** List of games to be displayed. */
         private Game[][] gameBook = null;
 
-        /** */
+        /** The current page to display when prompted by the main program */
         private int currentPage = 0;
 
         /**
          * Creates a 2D array for the app to display games
-         * @param games 
+         * @param games The list of games to convert into a 2D array
          */
         public void setGameBook(List<Game> games) {
             // Reset Values
@@ -78,30 +80,37 @@ public class App
             }
         }
 
+        /**
+         * Shows if the user has more than 5 games stored
+         * @return
+         */
         public boolean hasPages() {
             return gameBook.length > 1;
         }
     }
 
+    /**
+     * Inner class used when displaying a list of GameEntries as an option for the user to edit.
+     * 
+     * Used to accomodate the limited space on the terminal window
+     */
     public static class EntryDisplay {
-        /**  */
+        /** The total number of GameEntries to display on a single page  */
         private final int PAGE_SIZE = 5;
 
         /** 2D array of games to display */
         private GameEntry[][] entryBook;
 
-
+        /** The last GameEntry selected by the user */
         private GameEntry currentEntry;
 
-        private enum filter {
-            NONE,
-            INCOMPLETE,
-            COMPLETE,
-            NOTSTARTED
-        };
-
+        /** The page of the entryBook to display when prompted */
         private int currentPage = 0;
 
+        /** 
+         * Initializes the enryBook field using the entries from the given list 
+         * @param entries The list of GameEntries to convert into a 2D array
+         */
         public void setBook(List<GameEntry> entries) {
             // Reset Values
             currentPage = 0;
@@ -133,8 +142,8 @@ public class App
         }
 
         /**
-         * Displays all 
-         * @return
+         * Creates a string displaying all options on the current page, along with the key used to select it.
+         * @return A string listing all options available on the current page.
          */
         public String currentPageString() {
             StringBuilder output = new StringBuilder();
@@ -160,6 +169,10 @@ public class App
             }
         }
 
+        /**
+         * Shows if there is more than one page in the entryBook. This option is true when there are more than 5 entries to display
+         * @return True if the first dimension of the entryBook as a length greater than 1
+         */
         public boolean hasPages() {
             return entryBook.length > 1;
         }
@@ -179,11 +192,17 @@ public class App
             return currentEntry != null;
         }
 
+        /**
+         * Retrieves the last GameEntry selected by the user
+         * @return The currentEntry field
+         */
         public GameEntry getCurrentEntry() {
             return currentEntry;
         }
         
-
+        /**
+         * Resets all fields of the entryDisplay
+         */
         public void reset() {
             entryBook = null;
             currentEntry = null;
@@ -196,6 +215,7 @@ public class App
 
     /** Class used to collect entry information for terminal display */
     private static final EntryDisplay entryDisplay = new EntryDisplay();
+
     /** Manages all connections to the database */
     private static ConnectionManager connectionManager;
 
@@ -320,6 +340,7 @@ public class App
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
+
         } finally {
             connectionManager.closeConnections();
         }
@@ -354,6 +375,7 @@ public class App
                     System.out.println("Account does not exist");
                 }
                 break;
+
             case("2"):
                 System.out.print("INSERT USERNAME: ");
                 username = scan.nextLine();
@@ -371,6 +393,7 @@ public class App
                     System.out.println("Account already exists");
                 }
                 break;
+
             default:
                 break;
         }
@@ -395,6 +418,7 @@ public class App
                     System.out.println(e.getMessage());
                 }
                 break;
+
             case "1": // Register a new game
                 try {
                     List<Game> games = AccountManager.getUnownedGames();
@@ -443,6 +467,7 @@ public class App
                 AccountManager.logout();
                 result = MenuState.LOGIN;
                 break;
+
             default: // Error
                 System.out.println("ERROR: Invalid response");
                 break;
@@ -476,6 +501,7 @@ public class App
                 }
                 result = MenuState.START;
                 break;
+
             case "F":
                 System.out.print("Enter a generation to view: ");
                 String inputCaught = scan.nextLine();
@@ -496,12 +522,17 @@ public class App
                     System.out.print(e.getMessage());
                 }
                 break;
+
             case "N":
                 gameDisplay.nextPage();
                 break;
+
             case "C":
                 result = MenuState.START;
+                break;
+
             default: 
+                System.out.println("ERROR: Invalid response");
                 break;
         }
         return result;
@@ -530,13 +561,18 @@ public class App
                     result = MenuState.START;
                 }
                 break;
+
             case "N":
                 entryDisplay.nextPage();
                 result = MenuState.SELECT;
                 break;
+
             case "C":
                 result = MenuState.START;
+                break;
+
             default:
+                System.out.println("ERROR: Invalid response");
                 break;
         }
         return result;
@@ -573,6 +609,7 @@ public class App
                     System.out.print(e.getMessage());
                 }
                 break;
+
             case "R":
                 System.out.print("Enter the new rating (1 - 5): ");
                 String inputRating = scan.nextLine();
@@ -589,16 +626,20 @@ public class App
                     System.out.print(e.getMessage());
                 }
                 break;
+
             case "D":
                 System.out.println("Attempting to remove " + mayEdit.getGame().getTitle());
                 if (AccountManager.removeGameEntry(mayEdit)) {
                     System.out.println("Game Removed!");
                 }
                 break;
+
             case "C":
                 result = MenuState.START;
                 break;
+
             default:
+                System.out.println("ERROR: Invalid response");
                 break;
         }
 
