@@ -90,3 +90,13 @@ The user can view a list of games they own by typing '2' on the main menu.
 When the user has selected a game, they can edit either the total number of Pokemon they have caught, or their individual rating for the title. Alternatively, they can chose to delete the entry from their collection entirely.
 
 ![Edit Entry](./screenshots/EditEntry_Capstone.png)
+
+#### Edit the Number of Pokemon Caught
+Option "P" allows the user to change how many Pokemon they have caught in the current game. To save changes, the user must input a number between 0 and that game's total number of pokemon *inclusively*.
+
+![Edit screen for the total number of Pokemon](./screenshots/EditNumCaught_Capstone.png)
+
+#### Edit Rating
+Option "R" allows the user to change their rating for the given game. To save changes, the user must input a number between 1 and 5 *inclusively*.
+
+![Edit screen for the game's rating](./screenshots/EditRating_Capstone.png)
